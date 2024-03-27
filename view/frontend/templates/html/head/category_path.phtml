@@ -1,0 +1,32 @@
+<?php
+
+/**
+ * Copyright © Klevu Oy. All rights reserved. See LICENSE.txt for license details.
+ */
+
+declare(strict_types=1);
+
+// @TODO this can be removed once Metadata v2 is released
+
+use Klevu\Frontend\ViewModel\Escaper;
+use Klevu\FrontendApi\ViewModel\Html\Head\CategoryPathInterface;
+use Magento\Framework\View\Element\Template;
+use Magento\Framework\View\Helper\SecureHtmlRenderer;
+
+/**
+ * @var Template $block
+ * @var CategoryPathInterface $viewModel
+ * @var SecureHtmlRenderer $secureRenderer
+ * @var Escaper $escaperViewModel
+ */
+$categoryPathViewModel = $block->getCategoryPathViewModel();
+$escaperViewModel = $block->getEscaperViewModel();
+$escaper = $escaperViewModel->getEscaper();
+?>
+<?= /* @noEscape */ $secureRenderer->renderTag(
+    tagName: 'script',
+    attributes: ['type' => 'text/javascript'],
+    content: "\nvar klevu_pageCategory = '" . $escaper->escapeJs($categoryPathViewModel->getCategoryPath()) . "';"
+        . "\n" . "sessionStorage.setItem('klevu_pageCategory', klevu_pageCategory);",
+    textContent: false,
+) ?>

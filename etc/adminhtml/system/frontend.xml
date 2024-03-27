@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+
+<!-- Copyright © Klevu Oy. All rights reserved. See LICENSE.txt for license details. -->
+
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_include.xsd">
+
+    <group id="category_navigation"
+           translate="label"
+           sortOrder="40"
+           showInDefault="1"
+           showInWebsite="1"
+           showInStore="1">
+        <label>Category Navigation</label>
+        <attribute type="expanded">1</attribute>
+        <frontend_model>Magento\Config\Block\System\Config\Form\Fieldset</frontend_model>
+
+        <field id="theme"
+               translate="label comment"
+               sortOrder="10"
+               type="select"
+               showInDefault="1"
+               showInWebsite="1"
+               showInStore="1">
+            <config_path>klevu_frontend/category_navigation/theme</config_path>
+            <label>Ordering &amp; Rendering</label>
+            <source_model>Klevu\FrontendCategoryNavigation\Model\Config\Source\ThemeOptionSource</source_model>
+            <comment>
+                <![CDATA[
+                    <strong>Native:</strong> Klevu will be disabled, and will not power the rendering or result ordering of your search results page.<br />
+                    <strong>Klevu JS Theme:</strong> Use Klevu's JavaScript Theme to render and order the results of your search results page. Recommended for best results.<br />
+                ]]>
+            </comment>
+        </field>
+    </group>
+</config>

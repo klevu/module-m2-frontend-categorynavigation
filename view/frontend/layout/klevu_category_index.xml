@@ -1,0 +1,54 @@
+<?xml version="1.0"?>
+
+<!-- Copyright © Klevu Oy. All rights reserved. See LICENSE.txt for license details. -->
+
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd"
+      layout="1column">
+    <body>
+        <referenceBlock name="head.additional">
+            <block name="Klevu_FrontendCategoryNavigation.js_includes.category"
+                   template="Klevu_Frontend::html/head/js_includes.phtml"
+                   before="-"
+                   after="Klevu_Frontend.js_settings">
+                <arguments>
+                    <argument name="js_includes_view_model"
+                              xsi:type="object">Klevu\FrontendCategoryNavigation\ViewModel\Html\Head\JsIncludesCategory</argument>
+                    <argument name="escaper_view_model"
+                              xsi:type="object">Klevu\Frontend\ViewModel\Escaper</argument>
+                </arguments>
+            </block>
+        </referenceBlock>
+
+        <referenceBlock name="head.additional">
+            <block name="klevu.category_path"
+                   template="Klevu_FrontendCategoryNavigation::html/head/category_path.phtml"
+                   before="Klevu_Frontend.js_settings"
+                   after="Klevu_Frontend.js_includes.core">
+                <arguments>
+                    <argument name="category_path_view_model"
+                              xsi:type="object">Klevu\FrontendCategoryNavigation\ViewModel\Html\Head\CategoryPath</argument>
+                    <argument name="escaper_view_model"
+                              xsi:type="object">Klevu\Frontend\ViewModel\Escaper</argument>
+                </arguments>
+            </block>
+        </referenceBlock>
+
+        <referenceBlock name="content">
+            <block template="Klevu_FrontendCategoryNavigation::category.phtml"
+                   name="klevu_frontend_category_navigation.category_index"/>
+        </referenceBlock>
+
+        <referenceBlock name="category.products" remove="true"/>
+        <referenceBlock name="category.products.list" remove="true"/> <!-- @TODO find solution for this block required in GTM-->
+        <referenceBlock name="category.product.type.details.renderers" remove="true"/>
+        <referenceBlock name="category.product.addto" remove="true"/>
+        <referenceBlock name="category.product.addto.compare" remove="true"/>
+        <referenceBlock name="product_list_toolbar" remove="true"/>
+        <referenceBlock name="product_list_toolbar_pager" remove="true"/>
+        <referenceBlock name="category.product.addto.wishlist" remove="true"/>
+        <referenceBlock name="catalog.leftnav" remove="true"/>
+        <referenceBlock name="catalog.navigation.state" remove="true"/>
+        <referenceBlock name="catalog.navigation.renderer" remove="true"/>
+    </body>
+</page>
