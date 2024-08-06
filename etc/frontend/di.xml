@@ -69,6 +69,12 @@
 
     <type name="Klevu\Frontend\Service\KlevuSettingsBuilder">
         <arguments>
+            <argument name="klevuSettings" xsi:type="array">
+                <item name="powerUp" xsi:type="array">
+                    <item name="catnav"
+                          xsi:type="object">Klevu\FrontendCategoryNavigation\Service\Provider\CatNavPowerUpProvider</item>
+                </item>
+            </argument>
             <argument name="isEnabledConditions" xsi:type="array">
                 <item name="klevu_modules_enabled" xsi:type="array">
                     <item name="klevu_catnav_enabled"
@@ -89,7 +95,23 @@
         </arguments>
     </type>
 
-    <type name="Klevu\FrontendCategoryNavigation\Service\Provider\CategoryPath">
+    <virtualType name="Klevu\FrontendCategoryNavigation\ViewModel\Html\Head\CustomerGroupSuffix"
+                 type="Klevu\Frontend\ViewModel\Html\Head\CustomerGroupSuffix">
+        <arguments>
+            <argument name="isEnabledConditions" xsi:type="array">
+                <item name="klevu_integrated"
+                      xsi:type="object">Klevu\Frontend\Service\IsEnabledCondition\IsStoreIntegratedCondition</item>
+                <item name="klevu_modules_enabled" xsi:type="array">
+                    <item name="klevu_catnav_enabled"
+                          xsi:type="object">Klevu\FrontendCategoryNavigation\Service\IsEnabledCondition\IsCatNavEnabledCondition</item>
+                </item>
+                <item name="klevu_group_pricing_enabled"
+                      xsi:type="object">Klevu\Frontend\Service\IsEnabledCondition\IsCustomerGroupPriceEnabledCondition</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <type name="Klevu\FrontendCategoryNavigation\Service\Provider\CategoryPathProvider">
         <arguments>
             <argument name="logger" xsi:type="object">Klevu\Frontend\Logger\Logger</argument>
         </arguments>
@@ -116,4 +138,33 @@
             </argument>
         </arguments>
     </type>
+
+    <type name="Klevu\Frontend\ViewModel\CustomerGroupSuffix">
+        <arguments>
+            <argument name="isEnabledConditions" xsi:type="array">
+                <item name="klevu_modules_enabled" xsi:type="array">
+                    <item name="klevu_catnav_enabled"
+                          xsi:type="object">Klevu\FrontendCategoryNavigation\Service\IsEnabledCondition\IsCatNavEnabledCondition</item>
+                </item>
+            </argument>
+        </arguments>
+    </type>
+
+    <virtualType name="Klevu\FrontendCategoryNavigation\Service\Provider\CatNavPowerUpProvider"
+                 type="Klevu\Frontend\Service\Provider\PowerUpProvider">
+        <arguments>
+            <argument name="isEnabledConditions" xsi:type="array">
+                <item name="klevu_modules_enabled" xsi:type="array">
+                    <item name="klevu_catnav_enabled"
+                          xsi:type="object">Klevu\FrontendCategoryNavigation\Service\IsEnabledCondition\IsCatNavEnabledCondition</item>
+                </item>
+            </argument>
+            <argument name="delayPowerUpConditions" xsi:type="array">
+                <item name="delay_power_up_any_condition" xsi:type="array">
+                    <item name="is_group_pricing_enabled"
+                          xsi:type="object">Klevu\Frontend\Service\DelayPowerUpCondition\IsCustomerGroupPricingEnabledCondition</item>
+                </item>
+            </argument>
+        </arguments>
+    </virtualType>
 </config>

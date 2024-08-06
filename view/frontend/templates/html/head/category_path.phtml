@@ -23,10 +23,18 @@ $categoryPathViewModel = $block->getCategoryPathViewModel();
 $escaperViewModel = $block->getEscaperViewModel();
 $escaper = $escaperViewModel->getEscaper();
 ?>
+
+<?php
+$scriptString = <<<script
+
+sessionStorage.setItem("klevu_pageCategory", "{$escaper->escapeJs($categoryPathViewModel->getCategoryPath())}");
+
+script;
+?>
+
 <?= /* @noEscape */ $secureRenderer->renderTag(
     tagName: 'script',
-    attributes: ['type' => 'text/javascript'],
-    content: "\nvar klevu_pageCategory = '" . $escaper->escapeJs($categoryPathViewModel->getCategoryPath()) . "';"
-        . "\n" . "sessionStorage.setItem('klevu_pageCategory', klevu_pageCategory);",
+    attributes: ['type' => 'text/javascript', 'id' => 'klevu_category_path'],
+    content: $scriptString,
     textContent: false,
 ) ?>
