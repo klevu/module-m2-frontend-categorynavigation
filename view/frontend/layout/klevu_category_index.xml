@@ -46,7 +46,12 @@
 
         <referenceBlock name="content">
             <block template="Klevu_FrontendCategoryNavigation::category.phtml"
-                   name="klevu_frontend_category_navigation.category_index"/>
+                   name="klevu_frontend_category_navigation.category_index">
+                <container name="klevu_frontend_category_navigation.category_container">
+                    <block name="klevu_frontend_category_navigation.category_index_cls"
+                           template="Klevu_FrontendCategoryNavigation::category-cls.phtml"/>
+                </container>
+            </block>
         </referenceBlock>
 
         <referenceBlock name="category.products" remove="true"/>

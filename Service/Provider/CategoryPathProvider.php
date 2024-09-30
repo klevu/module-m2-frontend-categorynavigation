@@ -19,7 +19,7 @@ use Psr\Log\LoggerInterface;
 
 class CategoryPathProvider implements CategoryPathProviderInterface
 {
-    public const CATEGORY_PATH_SEPARATOR = '/';
+    public const CATEGORY_PATH_SEPARATOR = ';';
 
     /**
      * @var CategoryRegistryInterface

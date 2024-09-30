@@ -129,7 +129,7 @@ class CategoryPathProviderTest extends TestCase
         $result = $viewModel->get();
 
         $this->assertSame(
-            expected: $topCategory->getName() . '/' . $middleCategory->getName() . '/' . $bottomCategory->getName(),
+            expected: $topCategory->getName() . ';' . $middleCategory->getName() . ';' . $bottomCategory->getName(),
             actual: $result,
         );
     }

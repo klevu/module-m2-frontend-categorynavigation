@@ -10,7 +10,9 @@ namespace Klevu\FrontendCategoryNavigation\Test\Integration\Observer;
 
 use Klevu\Configuration\Service\Provider\ScopeProviderInterface;
 use Klevu\FrontendCategoryNavigation\Observer\UpdateCategoryPageLayout;
+use Klevu\FrontendCategoryNavigation\Service\Provider\ThemeProvider;
 use Klevu\Registry\Api\CategoryRegistryInterface;
+use Klevu\TestFixtures\Catalog\CategoryTrait;
 use Klevu\TestFixtures\Store\StoreFixturesPool;
 use Klevu\TestFixtures\Store\StoreTrait;
 use Klevu\TestFixtures\Traits\ObjectInstantiationTrait;
@@ -25,6 +27,7 @@ use Magento\Framework\ObjectManagerInterface;
 use Magento\Framework\View\LayoutInterface;
 use Magento\TestFramework\Helper\Bootstrap;
 use PHPUnit\Framework\TestCase;
+use TddWizard\Fixtures\Catalog\CategoryFixturePool;
 use TddWizard\Fixtures\Core\ConfigFixture;
 
 /**
@@ -33,6 +36,7 @@ use TddWizard\Fixtures\Core\ConfigFixture;
  */
 class UpdateCategoryPageLayoutTest extends TestCase
 {
+    use CategoryTrait;
     use ObjectInstantiationTrait;
     use SetAuthKeysTrait;
     use StoreTrait;
@@ -57,7 +61,9 @@ class UpdateCategoryPageLayoutTest extends TestCase
         $this->implementationFqcn = UpdateCategoryPageLayout::class;
         $this->interfaceFqcn = ObserverInterface::class;
         $this->objectManager = Bootstrap::getObjectManager();
+
         $this->storeFixturesPool = $this->objectManager->get(StoreFixturesPool::class);
+        $this->categoryFixturePool = $this->objectManager->get(CategoryFixturePool::class);
     }
 
     /**
@@ -68,6 +74,7 @@ class UpdateCategoryPageLayoutTest extends TestCase
     {
         parent::tearDown();
 
+        $this->categoryFixturePool->rollback();
         $this->storeFixturesPool->rollback();
     }
 
@@ -83,12 +90,24 @@ class UpdateCategoryPageLayoutTest extends TestCase
         );
     }
 
-    /**
-     * @magentoConfigFixture default/klevu_frontend/category_navigation/theme 1
-     * @magentoConfigFixture default_store klevu_frontend/category_navigation/theme 1
-     */
     public function testMagentoLayout_DisplayModePage(): void
     {
+        $this->createStore();
+        $storeFixture = $this->storeFixturesPool->get('test_store');
+        $scopeProvider = $this->objectManager->get(ScopeProviderInterface::class);
+        $scopeProvider->setCurrentScope($storeFixture->get());
+        $this->setAuthKeys(
+            scopeProvider: $scopeProvider,
+            jsApiKey: 'klevu-js-key',
+            restAuthKey: 'klevu-rest-key',
+        );
+
+        ConfigFixture::setForStore(
+            path: ThemeProvider::XML_PATH_CATEGORY_THEME,
+            value: 1,
+            storeCode: $storeFixture->getCode(),
+        );
+
         $layout = $this->objectManager->get(type: LayoutInterface::class);
 
         $request = $this->setRequest();
@@ -107,12 +126,23 @@ class UpdateCategoryPageLayoutTest extends TestCase
         );
     }
 
-    /**
-     * @magentoConfigFixture default/klevu_frontend/category_navigation/theme 0
-     * @magentoConfigFixture default_store klevu_frontend/category_navigation/theme 0
-     */
     public function testMagentoLayout_KlevuThemeDisabledInAdmin(): void
     {
+        $this->createStore();
+        $storeFixture = $this->storeFixturesPool->get('test_store');
+        $scopeProvider = $this->objectManager->get(ScopeProviderInterface::class);
+        $scopeProvider->setCurrentScope($storeFixture->get());
+        $this->setAuthKeys(
+            scopeProvider: $scopeProvider,
+            jsApiKey: 'klevu-js-key',
+            restAuthKey: 'klevu-rest-key',
+        );
+
+        ConfigFixture::setGlobal(
+            path: ThemeProvider::XML_PATH_CATEGORY_THEME,
+            value: 0,
+        );
+
         $layout = $this->objectManager->get(type: LayoutInterface::class);
 
         $request = $this->setRequest();
@@ -131,12 +161,13 @@ class UpdateCategoryPageLayoutTest extends TestCase
         );
     }
 
-    /**
-     * @magentoConfigFixture default/klevu_frontend/category_navigation/theme 1
-     * @magentoConfigFixture default_store klevu_frontend/category_navigation/theme 1
-     */
     public function testKlevuLayout_KlevuThemeEnabledInAdmin_NotIntegrated(): void
     {
+        ConfigFixture::setGlobal(
+            path: ThemeProvider::XML_PATH_CATEGORY_THEME,
+            value: 1,
+        );
+
         $layout = $this->objectManager->get(type: LayoutInterface::class);
 
         $request = $this->setRequest();
@@ -161,14 +192,14 @@ class UpdateCategoryPageLayoutTest extends TestCase
         $storeFixture = $this->storeFixturesPool->get('test_store');
         $scopeProvider = $this->objectManager->get(ScopeProviderInterface::class);
         $scopeProvider->setCurrentScope($storeFixture->get());
-
         $this->setAuthKeys(
             scopeProvider: $scopeProvider,
             jsApiKey: 'klevu-js-key',
             restAuthKey: 'klevu-rest-key',
         );
+
         ConfigFixture::setForStore(
-            path: 'klevu_frontend/category_navigation/theme',
+            path: ThemeProvider::XML_PATH_CATEGORY_THEME,
             value: 1,
             storeCode: $storeFixture->getCode(),
         );
@@ -193,11 +224,14 @@ class UpdateCategoryPageLayoutTest extends TestCase
 
     /**
      * @magentoAppIsolation enabled
-     * @magentoConfigFixture default/klevu_frontend/category_navigation/theme 0
-     * @magentoConfigFixture default_store klevu_frontend/category_navigation/theme 0
      */
     public function testPreviewKlevuLayout_KlevuThemeDisabledInAdmin_RequestParam_NotIntegrated(): void
     {
+        ConfigFixture::setGlobal(
+            path: ThemeProvider::XML_PATH_CATEGORY_THEME,
+            value: 0,
+        );
+
         $layout = $this->objectManager->get(type: LayoutInterface::class);
 
         $request = $this->setRequest();
@@ -219,21 +253,21 @@ class UpdateCategoryPageLayoutTest extends TestCase
         );
     }
 
-    /**
-     * @magentoConfigFixture default/klevu_frontend/category_navigation/theme 0
-     * @magentoConfigFixture klevu_test_store_1_store klevu_frontend/category_navigation/theme 0
-     */
     public function testPreviewKlevuLayout_KlevuThemeDisabledInAdmin_RequestParam_Integrated(): void
     {
         $this->createStore();
         $store = $this->storeFixturesPool->get('test_store');
         $scopeProvider = $this->objectManager->get(ScopeProviderInterface::class);
         $scopeProvider->setCurrentScope($store->get());
-
         $this->setAuthKeys(
             scopeProvider: $scopeProvider,
             jsApiKey: 'klevu-js-key',
             restAuthKey: 'klevu-rest-key',
+        );
+
+        ConfigFixture::setGlobal(
+            path: ThemeProvider::XML_PATH_CATEGORY_THEME,
+            value: 0,
         );
 
         $layout = $this->objectManager->get(type: LayoutInterface::class);
@@ -259,11 +293,25 @@ class UpdateCategoryPageLayoutTest extends TestCase
 
     /**
      * @magentoAppIsolation enabled
-     * @magentoConfigFixture default/klevu_frontend/category_navigation/theme 1
-     * @magentoConfigFixture default_store klevu_frontend/category_navigation/theme 1
      */
     public function testPreviewMagentoLayout_KlevuThemeEnabledInAdmin_RequestParam(): void
     {
+        $this->createStore();
+        $storeFixture = $this->storeFixturesPool->get('test_store');
+        $scopeProvider = $this->objectManager->get(ScopeProviderInterface::class);
+        $scopeProvider->setCurrentScope($storeFixture->get());
+        $this->setAuthKeys(
+            scopeProvider: $scopeProvider,
+            jsApiKey: 'klevu-js-key',
+            restAuthKey: 'klevu-rest-key',
+        );
+
+        ConfigFixture::setForStore(
+            path: ThemeProvider::XML_PATH_CATEGORY_THEME,
+            value: 1,
+            storeCode: $storeFixture->getCode(),
+        );
+
         $layout = $this->objectManager->get(type: LayoutInterface::class);
 
         $request = $this->setRequest();
@@ -285,12 +333,24 @@ class UpdateCategoryPageLayoutTest extends TestCase
         );
     }
 
-    /**
-     * @magentoConfigFixture default/klevu_frontend/category_navigation/theme 1
-     * @magentoConfigFixture default_store klevu_frontend/category_navigation/theme 1
-     */
     public function testHandleAdded_ForOtherRoutes_IfCategoryRegistrySet(): void
     {
+        $this->createStore();
+        $storeFixture = $this->storeFixturesPool->get('test_store');
+        $scopeProvider = $this->objectManager->get(ScopeProviderInterface::class);
+        $scopeProvider->setCurrentScope($storeFixture->get());
+        $this->setAuthKeys(
+            scopeProvider: $scopeProvider,
+            jsApiKey: 'klevu-js-key',
+            restAuthKey: 'klevu-rest-key',
+        );
+
+        ConfigFixture::setForStore(
+            path: ThemeProvider::XML_PATH_CATEGORY_THEME,
+            value: 1,
+            storeCode: $storeFixture->getCode(),
+        );
+
         $layout = $this->objectManager->get(type: LayoutInterface::class);
 
         $request = $this->setRequest(controller: 'other');
@@ -329,18 +389,16 @@ class UpdateCategoryPageLayoutTest extends TestCase
      * @param string|null $displayMode
      *
      * @return void
+     * @throws \Exception
      */
     private function setCategoryDisplayMode(?string $displayMode = Category::DM_PRODUCT): void
     {
+        $this->createCategory([
+            'display_mode' => $displayMode,
+        ]);
+        $categoryFixture = $this->categoryFixturePool->get('test_category');
         $categoryRegistry = $this->objectManager->get(CategoryRegistryInterface::class);
-        $mockCategory = $this->getMockBuilder(Category::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $mockCategory->expects($this->once())
-            ->method('getData')
-            ->with('display_mode')
-            ->willReturn($displayMode);
-        $categoryRegistry->setCurrentCategory($mockCategory);
+        $categoryRegistry->setCurrentCategory($categoryFixture->getCategory());
     }
 
     /**
