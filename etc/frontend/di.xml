@@ -14,11 +14,14 @@
     <preference for="Klevu\FrontendApi\ViewModel\Html\Head\CategoryPathInterface"
                 type="Klevu\FrontendCategoryNavigation\ViewModel\Html\Head\CategoryPath"/>
 
+    <preference for="Klevu\FrontendCategoryNavigation\Service\Action\UpdateCategoryPageLayoutActionInterface"
+                type="Klevu\FrontendCategoryNavigation\Service\Action\UpdateCategoryPageLayoutAction" />
+
     <virtualType name="Klevu\FrontendCategoryNavigation\ViewModel\Html\Head\JsIncludesCategory"
                  type="Klevu\Frontend\ViewModel\Html\Head\JsIncludes">
         <arguments>
             <argument name="jsIncludes" xsi:type="array">
-                <item name="landing" xsi:type="array">
+                <item name="klevu_cat_nav" xsi:type="array">
                     <item name="before" xsi:type="string">-</item>
                     <item name="provider"
                           xsi:type="object">Klevu\Frontend\Service\Provider\Urls\JsUrlProvider</item>
@@ -38,7 +41,7 @@
                  type="Klevu\Frontend\ViewModel\Html\Head\JsIncludes">
         <arguments>
             <argument name="jsIncludes" xsi:type="array">
-                <item name="core" xsi:type="array">
+                <item name="klevu_core" xsi:type="array">
                     <item name="is_enabled_conditions" xsi:type="array">
                         <item name="klevu_modules_enabled" xsi:type="array">
                             <item name="klevu_catnav_enabled"
@@ -55,8 +58,6 @@
             <argument name="links" xsi:type="array">
                 <item name="preconnect_klevu_core" xsi:type="array">
                     <item name="is_enabled_conditions" xsi:type="array">
-                        <item name="klevu_integrated"
-                              xsi:type="object">Klevu\Frontend\Service\IsEnabledCondition\IsStoreIntegratedCondition</item>
                         <item name="klevu_modules_enabled" xsi:type="array">
                             <item name="klevu_catnav_enabled"
                                   xsi:type="object">Klevu\FrontendCategoryNavigation\Service\IsEnabledCondition\IsCatNavEnabledCondition</item>
@@ -99,8 +100,6 @@
                  type="Klevu\Frontend\ViewModel\Html\Head\CustomerGroupSuffix">
         <arguments>
             <argument name="isEnabledConditions" xsi:type="array">
-                <item name="klevu_integrated"
-                      xsi:type="object">Klevu\Frontend\Service\IsEnabledCondition\IsStoreIntegratedCondition</item>
                 <item name="klevu_modules_enabled" xsi:type="array">
                     <item name="klevu_catnav_enabled"
                           xsi:type="object">Klevu\FrontendCategoryNavigation\Service\IsEnabledCondition\IsCatNavEnabledCondition</item>
@@ -167,4 +166,19 @@
             </argument>
         </arguments>
     </virtualType>
+
+    <type name="Klevu\FrontendCategoryNavigation\Service\Action\UpdateCategoryPageLayoutAction">
+        <arguments>
+            <argument name="isEnabledConditions" xsi:type="array">
+                <item name="klevu_integrated"
+                      xsi:type="object">Klevu\Frontend\Service\IsEnabledCondition\IsStoreIntegratedCondition</item>
+                <item name="klevu_catnav_enabled"
+                      xsi:type="object">Klevu\FrontendCategoryNavigation\Service\IsEnabledCondition\IsCatNavEnabledCondition</item>
+                <item name="klevu_category_route"
+                      xsi:type="object">Klevu\FrontendCategoryNavigation\Service\IsEnabledCondition\IsCategoryRouteCondition</item>
+                <item name="klevu_category_display_products"
+                      xsi:type="object">Klevu\FrontendCategoryNavigation\Service\IsEnabledCondition\IsCategoryDisplayingProductsCondition</item>
+            </argument>
+        </arguments>
+    </type>
 </config>

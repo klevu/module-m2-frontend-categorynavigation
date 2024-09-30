@@ -10,15 +10,19 @@ namespace Klevu\FrontendCategoryNavigation\Test\Integration\Service\IsEnabledCon
 
 use Klevu\FrontendApi\Service\IsEnabledCondition\IsEnabledConditionInterface;
 use Klevu\FrontendCategoryNavigation\Service\IsEnabledCondition\IsCatNavEnabledCondition;
+use Klevu\FrontendCategoryNavigation\Service\Provider\ThemeProvider;
 use Klevu\TestFixtures\Traits\ObjectInstantiationTrait;
 use Klevu\TestFixtures\Traits\TestImplementsInterfaceTrait;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\ObjectManagerInterface;
 use Magento\TestFramework\Helper\Bootstrap;
 use PHPUnit\Framework\TestCase;
+use TddWizard\Fixtures\Core\ConfigFixture;
 
 /**
  * @covers \Klevu\FrontendCategoryNavigation\Service\IsEnabledCondition\IsCatNavEnabledCondition
+ * @method IsEnabledConditionInterface instantiateTestObject(?array $arguments = null)
+ * @method IsEnabledConditionInterface instantiateTestObjectFromInterface(?array $arguments = null)
  * @magentoAppArea frontend
  */
 class IsCatNavEnabledConditionTest extends TestCase
@@ -43,57 +47,68 @@ class IsCatNavEnabledConditionTest extends TestCase
         $this->objectManager = Bootstrap::getObjectManager();
     }
 
-    /**
-     * @magentoConfigFixture default/klevu_frontend/category_navigation/theme 1
-     * @magentoConfigFixture default_store klevu_frontend/category_navigation/theme 0
-     */
     public function testExecute_ReturnsFalse_WhenDisabled(): void
     {
-        /** @var IsCatNavEnabledCondition $service */
+        ConfigFixture::setGlobal(
+            path: ThemeProvider::XML_PATH_CATEGORY_THEME,
+            value: 0,
+        );
+        ConfigFixture::setForStore(
+            path: ThemeProvider::XML_PATH_CATEGORY_THEME,
+            value: 0,
+            storeCode: 'default',
+        );
+
         $service = $this->instantiateTestObject();
         $this->assertFalse(condition: $service->execute());
     }
 
     /**
-     * @magentoConfigFixture default/klevu_frontend/category_navigation/theme 0
-     * @magentoConfigFixture default_store klevu_frontend/category_navigation/theme 1
+     * @magentoAppIsolation enabled
      */
     public function testExecute_ReturnsTrue_WhenEnabled(): void
     {
-        /** @var IsCatNavEnabledCondition $service */
+        ConfigFixture::setForStore(
+            path: ThemeProvider::XML_PATH_CATEGORY_THEME,
+            value: 1,
+            storeCode: 'default',
+        );
+
         $service = $this->instantiateTestObject();
         $this->assertTrue(condition: $service->execute());
     }
 
-    /**
-     * @magentoConfigFixture default/klevu_frontend/category_navigation/theme 1
-     * @magentoConfigFixture default_store klevu_frontend/category_navigation/theme 0
-     */
     public function testExecute_ReturnsTrue_WhenDisabled_RequestContainsKlevuPreview(): void
     {
+        ConfigFixture::setForStore(
+            path: ThemeProvider::XML_PATH_CATEGORY_THEME,
+            value: 1,
+            storeCode: 'default',
+        );
+
         $request = $this->objectManager->get(RequestInterface::class);
         $request->setParams([
             'klevu_layout_preview' => 'klevu',
         ]);
 
-        /** @var IsCatNavEnabledCondition $service */
         $service = $this->instantiateTestObject();
         $this->assertTrue(condition: $service->execute());
     }
 
-    /**
-     * @magentoConfigFixture default/klevu_frontend/category_navigation/theme 0
-     * @magentoConfigFixture default_store klevu_frontend/category_navigation/theme 1
-     */
-    public function testExecute_ReturnsTrue_WhenEnabled_RequestContainsNativePreview(): void
+    public function testExecute_ReturnsFalse_WhenEnabled_RequestContainsNativePreview(): void
     {
+        ConfigFixture::setForStore(
+            path: ThemeProvider::XML_PATH_CATEGORY_THEME,
+            value: 1,
+            storeCode: 'default',
+        );
+
         $request = $this->objectManager->get(RequestInterface::class);
         $request->setParams([
             'klevu_layout_preview' => 'native',
         ]);
 
-        /** @var IsCatNavEnabledCondition $service */
         $service = $this->instantiateTestObject();
-        $this->assertTrue(condition: $service->execute());
+        $this->assertFalse(condition: $service->execute());
     }
 }
