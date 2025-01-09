@@ -78,6 +78,9 @@ class UpdateCategoryPageLayoutTest extends TestCase
         $this->storeFixturesPool->rollback();
     }
 
+    /**
+     * @magentoAppIsolation enabled
+     */
     public function testUpdateCategoryPageLayoutObserver_IsConfigured(): void
     {
         $observerConfig = $this->objectManager->create(type: EventConfig::class);
@@ -90,6 +93,9 @@ class UpdateCategoryPageLayoutTest extends TestCase
         );
     }
 
+    /**
+     * @magentoAppIsolation enabled
+     */
     public function testMagentoLayout_DisplayModePage(): void
     {
         $this->createStore();
@@ -126,6 +132,9 @@ class UpdateCategoryPageLayoutTest extends TestCase
         );
     }
 
+    /**
+     * @magentoAppIsolation enabled
+     */
     public function testMagentoLayout_KlevuThemeDisabledInAdmin(): void
     {
         $this->createStore();
@@ -161,6 +170,9 @@ class UpdateCategoryPageLayoutTest extends TestCase
         );
     }
 
+    /**
+     * @magentoAppIsolation enabled
+     */
     public function testKlevuLayout_KlevuThemeEnabledInAdmin_NotIntegrated(): void
     {
         ConfigFixture::setGlobal(
@@ -186,6 +198,9 @@ class UpdateCategoryPageLayoutTest extends TestCase
         );
     }
 
+    /**
+     * @magentoAppIsolation enabled
+     */
     public function testKlevuLayout_KlevuThemeEnabledInAdmin_Integrated(): void
     {
         $this->createStore();
@@ -253,6 +268,9 @@ class UpdateCategoryPageLayoutTest extends TestCase
         );
     }
 
+    /**
+     * @magentoAppIsolation enabled
+     */
     public function testPreviewKlevuLayout_KlevuThemeDisabledInAdmin_RequestParam_Integrated(): void
     {
         $this->createStore();
@@ -333,6 +351,9 @@ class UpdateCategoryPageLayoutTest extends TestCase
         );
     }
 
+    /**
+     * @magentoAppIsolation enabled
+     */
     public function testHandleAdded_ForOtherRoutes_IfCategoryRegistrySet(): void
     {
         $this->createStore();
