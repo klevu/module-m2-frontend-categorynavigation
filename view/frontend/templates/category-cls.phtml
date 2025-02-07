@@ -14,7 +14,7 @@ use Magento\Framework\View\Helper\SecureHtmlRenderer;
  * @var SecureHtmlRenderer $secureRenderer
  */
 ?>
-<?php $styleString = <<<style
+<?php $styleString = "
 .klevuLanding {min-height: 921px;}
 @media (max-width: 1100px) {
   .klevuLanding {min-height: 1145px;}
@@ -28,7 +28,7 @@ use Magento\Framework\View\Helper\SecureHtmlRenderer;
 @media (max-width: 480px) {
   .klevuLanding {min-height: 4228px;}
 }
-style;
+";
 ?>
 
 <?= /* @noEscape */ $secureRenderer->renderTag(
