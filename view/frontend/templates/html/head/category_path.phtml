@@ -25,11 +25,9 @@ $escaper = $escaperViewModel->getEscaper();
 ?>
 
 <?php
-$scriptString = <<<script
-
-sessionStorage.setItem("klevu_pageCategory", "{$escaper->escapeJs($categoryPathViewModel->getCategoryPath())}");
-
-script;
+$scriptString = "
+sessionStorage.setItem('klevu_pageCategory', '{$escaper->escapeJs($categoryPathViewModel->getCategoryPath())}');
+";
 ?>
 
 <?= /* @noEscape */ $secureRenderer->renderTag(

@@ -24,9 +24,9 @@ $escaper = $escaperViewModel->getEscaper();
 
 <?php if ($customerGroupSuffixViewModel->isEnabled()): ?>
     <?php
-    $scriptString = <<<script
+    $scriptString = "
         klevu.settings.chains.initChain.add({
-            name: "addPriceSuffixToCatNavQuery",
+            name: 'addPriceSuffixToCatNavQuery',
             fire: function (data) {
                 if (klevu.getObjectPath(klevu.search, 'catnav', false)
                     && klevu.getGlobalSetting('flags.addPriceSuffixToQuery.catnav', false)
@@ -41,19 +41,18 @@ $escaper = $escaperViewModel->getEscaper();
             }
         });
         let catNavSettingsUpdate = {};
-
-script;
+    ";
     ?>
     <?php if ($customerGroupSuffixViewModel->isPowerUpRequired()): ?>
         <?php
-        $scriptString .= <<<script
+        $scriptString .= "
         klevu.setObjectPath(catNavSettingsUpdate, 'powerUp.catnav',  true);
 
-script;
+        ";
         ?>
     <?php endif; ?>
     <?php
-    $scriptString .= <<<script
+    $scriptString .= "
         document.addEventListener(
             '{$escaper->escapeJs($customerGroupSuffixViewModel->getCustomerDataLoadErrorEventName())}',
             function () {
@@ -67,17 +66,15 @@ script;
                 klevu(catNavSettingsUpdate);
             }
         );
-
-script;
+    ";
     ?>
     <?php
-    $script = <<<script
+    $script = "
     window._klvReady = window._klvReady || [];
     window._klvReady.push(function() {
         {$scriptString}
     });
-
-script;
+    ";
     ?>
     <?= $secureRenderer->renderTag(
         tagName: 'script',
