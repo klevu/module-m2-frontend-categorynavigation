@@ -30,18 +30,6 @@
                               xsi:type="object">Klevu\Frontend\ViewModel\Escaper</argument>
                 </arguments>
             </block>
-
-            <block name="Klevu_FrontendCategoryNavigation.customer_group_suffix"
-                   template="Klevu_FrontendCategoryNavigation::html/head/customer_group_suffix.phtml"
-                   before="Klevu_Frontend.session_data"
-                   after="Klevu_Frontend.js_includes">
-                <arguments>
-                    <argument name="customer_group_suffix_view_model"
-                              xsi:type="object">Klevu\FrontendCategoryNavigation\ViewModel\Html\Head\CustomerGroupSuffix</argument>
-                    <argument name="escaper_view_model"
-                              xsi:type="object">Klevu\Frontend\ViewModel\Escaper</argument>
-                </arguments>
-            </block>
         </referenceContainer>
 
         <referenceBlock name="content">
@@ -53,6 +41,20 @@
                 </container>
             </block>
         </referenceBlock>
+
+        <referenceContainer name="Klevu_Frontend.before.body.end">
+            <block name="Klevu_FrontendCategoryNavigation.customer_group_suffix"
+                   template="Klevu_FrontendCategoryNavigation::html/head/customer_group_suffix.phtml"
+                   before="Klevu_Frontend.session_data"
+                   after="Klevu_Frontend.customer_group_suffix">
+                <arguments>
+                    <argument name="customer_group_suffix_view_model"
+                              xsi:type="object">Klevu\FrontendCategoryNavigation\ViewModel\Html\Head\CustomerGroupSuffix</argument>
+                    <argument name="escaper_view_model"
+                              xsi:type="object">Klevu\Frontend\ViewModel\Escaper</argument>
+                </arguments>
+            </block>
+        </referenceContainer>
 
         <referenceBlock name="category.products" remove="true"/>
         <referenceBlock name="category.products.list" remove="true"/> <!-- @TODO find solution for this block required in GTM-->
